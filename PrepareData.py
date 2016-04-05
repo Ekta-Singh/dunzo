@@ -5,7 +5,7 @@ import numpy as np
 import sys
 import pickle
 from decimal import *
-getcontext().prec = 3
+getcontext().prec = 2
 from sklearn.preprocessing import normalize
 
 'Import raw file'
@@ -54,30 +54,36 @@ raw_data_4=raw_data_3.groupby(['shopping_profile_id']).agg({'brand_id':lambda x:
 product_matrix=[dict() for x in range(len(brandDict))]
 s=0
 for index, row in raw_data_4.iterrows():
-    s+=1
     #if s>4:
      #   break
     print s
     for brand1 in row['brand_id']:
         for brand2 in row['brand_id']:
             if  brandDict[brand2] in product_matrix[brandDict[brand1]]:
-                product_matrix[brandDict[brand1]][brandDict[brand2]]+=Decimal(1)*10000/Decimal(brandIDCount[brandDict[brand2]])  # scaling basd on frequency of the brand
-               
+                product_matrix[brandDict[brand1]][brandDict[brand2]]+=1
+                
             else:
-                product_matrix[brandDict[brand1]][brandDict[brand2]]=Decimal(1)/Decimal(brandIDCount[brandDict[brand2]])
-               
+                product_matrix[brandDict[brand1]][brandDict[brand2]]=1
+    s+=1
 
+'Creating product co-occurence dictionary for scoring which is scaled by occurrence of a brand'
+s=0
+corpus=[]
+for brand1 in product_matrix:
+    print s
+    temp=[]
+    for brand2,count in brand1.iteritems():
+        newValue=round(float(count*1000)/brandIDCount[brand2],4)
+        product_matrix[s][brand2]=newValue
+        temp.append((brand2,value))
+    corpus.append(temp)
+    s+=1                 
 #normalized_product_matrix_t=normalize(product_matrix, axis=0, norm='l1')
 #normalized_product_matrix=normalize(normalized_product_matrix_t, axis=1, norm='l1')
 
 
 'Corpus for tfidf scoring'
-corpus=[]
-for brand1 in product_matrix:
-    temp=[]
-    for brand2,value in brand1.iteritems():
-        temp.append((brand2,value))
-    corpus.append(temp)
+
     
 with open('product_matrix.pickle','wb') as p:
     pickle.dump(product_matrix,p)

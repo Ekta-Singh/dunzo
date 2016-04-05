@@ -15,7 +15,7 @@ corpus=pickle.load(open('corpus_1.pickle','rb'))
 product_matrix=pickle.load(open('product_matrix.pickle','rb'))
 
 print 'pickles loaded'
-'''
+
 i=0
 list=[]
 f=open('product_association.csv','wb')
@@ -31,9 +31,6 @@ for i in range(len(brandDict)):
     i+=1
 
 
-'''
-
-
 tfidf = models.TfidfModel(corpus)
 tfidf_product= tfidf[corpus]
 
@@ -41,14 +38,20 @@ lsi=models.LsiModel(corpus,num_topics=400)
 lsi_product=lsi[tfidf_product]
 
 index = similarities.MatrixSimilarity(tfidf_product)
-index.num_best = 10
+index_1 = similarities.MatrixSimilarity(lsi_product)
+index.num_best = 11
+index_1.num_best = 11
 
 i=0
 list=[]
-f=open('tfidf_csv.csv','wb')
+f=open('tfidf_scoring.csv','wb')
 tfidf_csv=csv.writer(f)
+
+f1=open('lsi_scoring.csv','wb')
+lsi_csv=csv.writer(f1)
+
 for i in range(len(brandDict)):
-    #score=index[lsi[tfidf_product[i]]] #lsi
+    score_1=index_1[lsi[tfidf_product[i]]] #lsi
     score=index[tfidf_product[i]] #tfidf
     list1=[]
     print i
@@ -57,6 +60,12 @@ for i in range(len(brandDict)):
             continue
         row=((brandIDName[indexBrand[i]],brandIDName[indexBrand[item[0]]],item[1]))
         tfidf_csv.writerow(row)
+    
+    for item in score_1:
+        if item[0]==i:
+            continue
+        row=((brandIDName[indexBrand[i]],brandIDName[indexBrand[item[0]]],item[1]))
+        lsi_csv.writerow(row)
     
     i+=1
 

@@ -26,17 +26,21 @@ class getBrandSimilarity():
         
         print 'lsi created'
         
-        self.index = similarities.MatrixSimilarity(self.lsi_product)
-        self.index.num_best = 10
+        self.index_1 = similarities.MatrixSimilarity(self.lsi_product)
+        self.index = similarities.MatrixSimilarity(self.tfidf_product)
+        self.index.num_best = 11
+        self.index_1.num_best = 11
         
         print 'index created'
         
     def getBrandScoreLsi(self,brandID):
         brandSno=self.brandDict[brandID]
         lsi_query=self.lsi[self.tfidf_product[brandSno]]
-        score=self.index[lsi_query]
+        score=self.index_1[lsi_query]
         similaritylist=[]
         for item in score:
+            if item[0]==brandSno:
+                conitnue
             similaritylist.append((self.brandIDName[self.indexBrand[item[0]]],item[1]))
         return similaritylist
     
@@ -45,6 +49,8 @@ class getBrandSimilarity():
         similaritylist=[]
         sortedDict=sorted(self.product_matrix[brandSno].items(),key=operator.itemgetter(1),reverse=True)
         for item in sortedDict[:20]:
+            if item[0]==brandSno:
+                conitnue
             similaritylist.append((self.brandIDName[self.indexBrand[item[0]]],item[1]))
         return similaritylist
     
@@ -53,11 +59,13 @@ class getBrandSimilarity():
         score=self.index[self.tfidf_product[brandSno]]
         similaritylist=[]
         for item in score:
+            if item[0]==brandSno:
+                conitnue
             similaritylist.append((self.brandIDName[self.indexBrand[item[0]]],item[1]))
         return similaritylist
     
 if __name__=='__main__':
     bs=getBrandSimilarity()
-    print bs.getBrandScoreLsi(23)
-    print bs.getBrandsProductAssociation(23)   
-    print bs.getBrandScoreTfidf(23)
+    print bs.getBrandScoreLsi(0)
+    print bs.getBrandsProductAssociation(0)   
+    print bs.getBrandScoreTfidf(0)
