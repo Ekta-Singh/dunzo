@@ -66,6 +66,6 @@ class getBrandSimilarity():
     
 if __name__=='__main__':
     bs=getBrandSimilarity()
-    print bs.getBrandScoreLsi(0)
-    print bs.getBrandsProductAssociation(0)   
-    print bs.getBrandScoreTfidf(0)
+    print bs.getBrandScoreLsi(1)
+    print bs.getBrandsProductAssociation(1)   
+    print bs.getBrandScoreTfidf(1)
